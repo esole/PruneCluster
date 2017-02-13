@@ -316,6 +316,31 @@ var PruneCluster;
             }
             this._markers = newMarkersList;
         };
+        
+        
+        PruneCluster.prototype.RemoveMarkersCat = function (cat) {
+            if (!cat) {                
+                return;
+            }
+            
+            for (var i = 0, l = this._markers.length; i < l; ++i) {
+                if(this._markers[i].category == cat)
+                {
+                    this._markers[i]._removeFlag = true;
+                }
+            }
+            var newMarkersList = [];
+            for (i = 0, l = this._markers.length; i < l; ++i) {
+                if (!this._markers[i]._removeFlag) {
+                    newMarkersList.push(this._markers[i]);
+                }
+                else {
+                    delete this._markers[i]._removeFlag;
+                }
+            }
+            this._markers = newMarkersList;
+        };
+        
         PruneCluster.prototype.FindMarkersInArea = function (area) {
             var aMinLat = area.minLat, aMaxLat = area.maxLat, aMinLng = area.minLng, aMaxLng = area.maxLng, markers = this._markers, result = [];
             var firstIndex = this._indexLowerBoundLng(aMinLng);
@@ -410,6 +435,9 @@ var PruneClusterForLeaflet = (L.Layer ? L.Layer : L.Class).extend({
     },
     RemoveMarkers: function (markers) {
         this.Cluster.RemoveMarkers(markers);
+    },
+    RemoveMarkersCat: function (cat) {
+        this.Cluster.RemoveMarkersCat(cat);
     },
     BuildLeafletCluster: function (cluster, position) {
         var _this = this;
